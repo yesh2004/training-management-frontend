@@ -1,23 +1,37 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-
-
-export default function page() {
-  const [email, setEmail] = useState("");
+export default function LoginPage() {
+  const [username, setUsername] = useState("");  // <-- username not email
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const router = useRouter();
 
-
-  const handleSubmit = (e: React.FormEvent) => {
-
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if(email==="admin@gmail.com" && password ==="password"){
-      window.history.pushState("","","/dashboard")
-      location.reload()
-      
+    setError("");
+
+    try {
+      const res = await fetch("http://localhost:8000/api/login", {   // <-- POST to /api/login
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",  // <-- IMPORTANT: to receive cookies!
+        body: JSON.stringify({ username, password }),
+      });
+
+      if (res.ok) {
+        router.push("/dashboard"); // on success go to dashboard
+      } else {
+        const errorData = await res.json();
+        setError(errorData.error || "Login failed");
+      }
+    } catch (err) {
+      setError("Something went wrong. Please try again.");
     }
-    console.log("Logging in with:", { email, password });
   };
 
   return (
@@ -28,13 +42,13 @@ export default function page() {
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-gray-700">Email</label>
+            <label className="block text-gray-700">Username</label>
             <input
-              type="email"
+              type="text"
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required
             />
           </div>
@@ -49,11 +63,13 @@ export default function page() {
               required
             />
           </div>
+          {error && (
+            <div className="text-red-500 text-sm text-center">{error}</div>
+          )}
           <button
             type="submit"
             className="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition"
           >
-
             Login
           </button>
         </form>

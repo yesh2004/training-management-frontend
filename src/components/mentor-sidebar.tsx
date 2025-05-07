@@ -16,7 +16,7 @@ import {
 const items = [
   {
     title: "Home",
-    url: "/dashboard",
+    url: "/mentor-dashboard",
     icon: Home,
   },
   {
@@ -26,17 +26,17 @@ const items = [
   },
   {
     title: "Calendar",
-    url: "/dashboard/calender",
+    url: "/mentor-dashboard/calender",
     icon: Calendar,
   },
   {
     title: "Assignments",
-    url: "/dashboard/assignments",
+    url: "/mentor-dashboard/create-assignment",
     icon: Newspaper,
   },
   {
     title: "Learning Materials",
-    url: "/dashboard/learning",
+    url: "/mentor-dashboard/create-mat",
     icon: Newspaper,
   },
   {

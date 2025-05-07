@@ -1,6 +1,5 @@
 "use client"
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
@@ -15,49 +14,29 @@ type Trainee = {
 
 export default function MentorDashboard() {
   const [trainees, setTrainees] = useState<Trainee[]>([])
-  const[mentor,setMentor]=useState<String>("")
-  const router = useRouter()
 
   useEffect(() => {
-    const fetchAuthAndTrainees = async () => {
+    const fetchTrainees = async () => {
       try {
-        // Step 1: Check user auth and role
-        const userRes = await fetch("http://localhost:8000/api/user-info", {
-          credentials: "include",
-        })
-        if (!userRes.ok) {
-          router.push("/login")
-          return
-        }
-
-        const userData = await userRes.json()
-        setMentor(userData)
-        if (userData.role !== "mentor") {
-          router.push("/dashboard")
-          return
-        }
-
-        // Step 2: Fetch trainees if user is mentor
-        const res = await fetch("http://localhost:8000/api/mentor/trainees", {
-          credentials: "include",
-        })
+        const res = await fetch("http://localhost:8000/api/mentor/trainees",{
+            credentials: "include",
+          })
         if (!res.ok) throw new Error("Failed to fetch")
         const data = await res.json()
         setTrainees(data)
       } catch (err) {
-        console.error("Error:", err)
-        router.push("/login")
+        console.error("Error loading trainees", err)
       }
     }
 
-    fetchAuthAndTrainees()
-  }, [router])
+    fetchTrainees()
+  }, [])
 
   return (
     <div className="p-6 max-w-5xl mx-auto space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Mentor: {mentor.username}</CardTitle>
+          <CardTitle>Mentor: Jack</CardTitle>
           <CardDescription>Mentor ID: RXD4X43</CardDescription>
         </CardHeader>
         <CardContent>
@@ -90,7 +69,7 @@ export default function MentorDashboard() {
       </Card>
 
       <div className="flex gap-4">
-        <Link href="/mentor-dashboard/create-mat">
+        <Link href="/mentor-dashboard/create-material">
           <Button className="w-full">Create Material</Button>
         </Link>
         <Link href="/mentor-dashboard/create-assignment">
